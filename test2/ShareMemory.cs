@@ -30,20 +30,16 @@ namespace test2
         {                        
         }
 
-        public byte[] Read(int index, int datalen)
+        public void Read(out byte[] bytes, int index, int datalen)
         {
-            byte[] bytes = new byte[20];
             mutex_read.WaitOne();
             using (MemoryMappedViewStream stream = mmf_read.CreateViewStream(index, datalen)) //创建文件内存视图流
             {                
                 BinaryReader reader = new BinaryReader(stream);
                 bytes = reader.ReadBytes(datalen);
                 //reader.Read(bytes, 0, datalen); //为何不需要out/ref也能传出参数？
-
             }
             mutex_read.ReleaseMutex();
-
-            return bytes;
         }
 
         public void Write(byte[] bytes, int index, int datalen)

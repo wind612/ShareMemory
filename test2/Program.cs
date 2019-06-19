@@ -55,8 +55,8 @@ namespace test2
             // read
             Console.WriteLine("waitting for read...");
             Thread.Sleep(3000);
-            byte[] bytes = new byte[Marshal.SizeOf(typeof(smm_header))];
-            bytes = sm.Read(0, bytes.Length);
+            var bytes = new byte[Marshal.SizeOf(typeof(smm_header))];
+            sm.Read(out bytes, 0, Marshal.SizeOf(typeof(smm_header)));
             smm_header head2 = Struct_Transform.BytesToStruct<smm_header>(bytes);
             Console.WriteLine($"command = {head2.command}, length = {head2.length}");
         }
