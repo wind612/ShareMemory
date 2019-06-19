@@ -10,16 +10,19 @@ namespace test2
     {
         private const string ShareMemoryName_read = "ShareMemory_to_cshap";
         private const string ShareMemoryName_write = "ShareMemory_to_cpp";
-        private const string mutexName = "testmapmutex";
+        private const string mutexName_read = "testmapmutex_read";
+        private const string mutexName_write = "testmapmutex_write";
         private const int MaxShareMemorySize = 1024000;
-        public Mutex mutex { get; set; }
+        public Mutex mutex_read { get; set; }
+        public Mutex mutex_write { get; set; }
         public MemoryMappedFile mmf_read { get; set; }
         public MemoryMappedFile mmf_write { get; set; }
 
         public ShareMemory()
         {
             bool mutexCreated;
-            mutex = new Mutex(false, mutexName, out mutexCreated);
+            mutex_read = new Mutex(false, mutexName_read, out mutexCreated);
+            mutex_write = new Mutex(false, mutexName_write, out mutexCreated);
             mmf_read = MemoryMappedFile.CreateOrOpen(ShareMemoryName_read, MaxShareMemorySize, MemoryMappedFileAccess.ReadWrite);
             mmf_write = MemoryMappedFile.CreateOrOpen(ShareMemoryName_write, MaxShareMemorySize, MemoryMappedFileAccess.ReadWrite);
         }
@@ -27,60 +30,31 @@ namespace test2
         {                        
         }
 
-        public byte[] Read()
+        public byte[] Read(int index, int datalen)
         {
-            byte[] bytes = new byte[10];
-            Console.WriteLine("waitting for read...");
-
-            mutex.WaitOne();
-            using (MemoryMappedViewStream stream = mmf_read.CreateViewStream()) //创建文件内存视图流
+            byte[] bytes = new byte[20];
+            mutex_read.WaitOne();
+            using (MemoryMappedViewStream stream = mmf_read.CreateViewStream(index, datalen)) //创建文件内存视图流
             {                
                 BinaryReader reader = new BinaryReader(stream);
-                int datalen = reader.ReadInt32();
-                Console.WriteLine($"datalen = {datalen}");
-                if (datalen > 0 )
-                {                    
-                    bytes = reader.ReadBytes(datalen);
-                }
-                else
-                {
-                    Thread.Sleep(500);
-                }
-                
+                bytes = reader.ReadBytes(datalen);
+                //reader.Read(bytes, 0, datalen); //为何不需要out/ref也能传出参数？
+
             }
-            mutex.ReleaseMutex();
+            mutex_read.ReleaseMutex();
 
             return bytes;
         }
 
-        public void Write(byte[] bytes, Int32 datalen)
+        public void Write(byte[] bytes, int index, int datalen)
         {
-            Console.WriteLine("waitting for write...");
-
-            if(datalen < 0)
-            {
-                return;
-            }
-
-            mutex.WaitOne();
-            using (MemoryMappedViewStream stream = mmf_read.CreateViewStream()) //创建文件内存视图流
+            mutex_write.WaitOne();
+            using (MemoryMappedViewStream stream = mmf_write.CreateViewStream(index, datalen)) //创建文件内存视图流
             {
                 BinaryWriter writer = new BinaryWriter(stream);
-                // write datalen first
-                byte[] len = BitConverter.GetBytes(datalen);
-                for (int i = 0; i < Marshal.SizeOf(datalen); i++)
-                {
-                    writer.Write(len[i]);
-                }
-
-                // then write data.
-                for (int i = 0; i < datalen; i++)
-                {
-                    writer.Write(bytes[i]);
-                }
+                writer.Write(bytes);
             }
-            mutex.ReleaseMutex();
+            mutex_write.ReleaseMutex();
         }
-
     }
 }

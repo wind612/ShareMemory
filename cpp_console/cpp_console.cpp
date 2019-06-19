@@ -5,60 +5,50 @@
 #include "ShareMemory.h"
 #include <iostream>
 
+#ifndef Int32
+typedef UINT32 Int32;
+#endif // !Int32
+
+struct smm_header
+{
+	Int32 length;
+	Int32 command;
+};
 
 struct Person
 {
-	UINT32 age;
-
-	UINT32 sex;
+	Int32 age;
+	Int32 sex;
 
 	//string secret;
 
 };
 
-CShareMemory g_smm;
+CShareMemory g_smm;//如果是局部变量，对象析构之后共享内存里面的东西也会清空。
+
 
 void test1()
 {
-	BYTE data[10] = { 1,2,3,4,5,6,7,8,9,10 };
-	BYTE data_2[10];
+	smm_header head;	
+	g_smm.read((BYTE*)&head, 0, sizeof(head));
+	printf("head.length=%d, head.command=%d\r\n", head.length, head.command);
 
-	//tmp.test();
-
-	g_smm.write(data, 10);
-
-	int readlen = g_smm.read(data_2, 10);
-	for (int i = 0; i < readlen; i++)
-	{
-		std::cout << dec << (int)data_2[i] << ",";
-	}
-	std::cout << endl;
-}
-
-void test2()
-{
 	Person pp;
-	pp.age = 11;
-	pp.sex = 1;
-
-	BYTE data[100];
-	BYTE data_2[100];
-
-	memcpy(data, (void*)&pp, sizeof(pp));
-
-	g_smm.write(data, sizeof(pp));
-
-	int readlen = g_smm.read(data_2, 10);
-	for (int i = 0; i < readlen; i++)
+	if (head.command == 1 && head.length == sizeof(Person))
 	{
-		std::cout << dec << (int)data_2[i] << ",";
+		g_smm.read((BYTE*)&pp, sizeof(smm_header), sizeof(Person));
+		printf("pp.age=%d, pp.sex=%d\r\n", pp.age, pp.sex);
 	}
-	std::cout << endl;
+	
+
+	head.command = 2;
+	head.length = 20;
+	g_smm.write((BYTE*)&head, 0, sizeof(head));
 }
 
 int main()
 {
-	test2();
+	test1();
 
 	system("pause");
 	std::cout << "Hello World!\n";

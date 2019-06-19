@@ -26,16 +26,20 @@ class CShareMemory
 {
 private:
 	wstring m_ShareMemoryName_write;                // 内存映射对象名称
-	wstring m_strMutex;
+	wstring m_ShareMemoryName_read;                // 内存映射对象名称
+	wstring m_strMutex_write;
+	wstring m_strMutex_read;
 	HANDLE m_hMap_write;
-	HANDLE m_hMutex;
+	HANDLE m_hMap_read;
+	HANDLE m_hMutex_write;
+	HANDLE m_hMutex_read;
 
 public:
 	CShareMemory();
 	~CShareMemory();
 
-	void write(BYTE* data, UINT32 data_len);
-	UINT32 read(BYTE* data, UINT32 data_len);
+	void write(BYTE* data, UINT32 index, UINT32 data_len);
+	void read(BYTE* data, UINT32 index, UINT32 data_len);
 
 	void test();
 };
