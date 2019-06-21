@@ -1,0 +1,13 @@
+16:45 2019/6/21
+version:
+JSON for Modern C++ 
+json-3.6.1
+
+https://github.com/nlohmann/json
+
+==========================================
+使用方法：
+只需要拷贝文件夹json，设置include路径，包含一个头文件就OK了。
+
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;

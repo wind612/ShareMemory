@@ -28,13 +28,34 @@ namespace test2
     {
         static void Main(string[] args)
         {
-            test1();
+            test2();
 
             Console.ReadKey();
         }
-    
+
+        static void test2()
+        {
+            // read
+            ShareMemory sm = new ShareMemory();
+
+            Console.WriteLine("waitting for read...");
+            Thread.Sleep(3000);
+
+            var bytes = new byte[Marshal.SizeOf(typeof(smm_header))];
+            sm.Read(out bytes, 0, Marshal.SizeOf(typeof(smm_header)));
+            smm_header head2 = Struct_Transform.BytesToStruct<smm_header>(bytes);
+            Console.WriteLine($"command = {head2.command}, length = {head2.length}");
+
+            var bytes2 = new byte[head2.length];
+            string str = System.Text.Encoding.Default.GetString(bytes2);
+            str = StringToUniCode.StringToUnicode(str);
+            Console.WriteLine($"str = {str}");
+        }
+
+
         static void test1()
         {
+            //write
             smm_header head = new smm_header();
             head.command = 1;
             head.length = Marshal.SizeOf(typeof(Person));

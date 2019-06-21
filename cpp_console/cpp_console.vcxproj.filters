@@ -21,9 +21,6 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShareMemory.h">
-      <Filter>IPC</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -32,7 +29,7 @@
     <ClCompile Include="cpp_console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShareMemory.cpp">
+    <ClCompile Include="IPC\ShareMemory.cpp">
       <Filter>IPC</Filter>
     </ClCompile>
   </ItemGroup>
