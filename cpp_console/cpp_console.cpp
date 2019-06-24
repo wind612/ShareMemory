@@ -75,7 +75,45 @@ namespace ns {
 
 CShareMemory g_smm;//如果是局部变量，对象析构之后共享内存里面的东西也会清空。
 
-void test2()
+void test_read()
+{
+	// read head
+	smm_header head;
+	g_smm.read((BYTE*)& head, 0, sizeof(head));
+	printf("head.length=%d, head.command=%d\r\n", head.length, head.command);
+
+	// read data.
+	char pBuff[1024] = {0};
+	g_smm.read((BYTE*)& pBuff, sizeof(smm_header), head.length);
+	std::string data_str = pBuff;
+	printf("data_str = %s\r\n", data_str.c_str());
+
+	// conversion: json -> person	
+	json j = json::parse(data_str);
+	auto pp = j.get<ns::person>();	
+
+	// print
+	std::string name = UTF8_To_string(pp.name);
+	printf("pp.name=%s, pp.address=%s, pp.age=%d\r\n", name.c_str(), pp.address.c_str(), pp.age);
+
+	printf("pp.Tmplist1 = {");
+	size_t len = pp.Tmplist1.size();
+	for (size_t i = 0; i < len; i++) {
+		int d = pp.Tmplist1[i];
+		printf("%d, ", d);
+	}
+	printf("}\r\n");
+
+	printf("pp.Tmplist2 = {");
+	len = pp.Tmplist2.size();
+	for (size_t i = 0; i < len; i++) {
+		auto t2 = pp.Tmplist2[i];
+		printf("{x=%d, y=%d}, ", t2.x, t2.y);
+	}
+	printf("}\r\n");
+}
+
+void test_write()
 {
 	// create a person
 	// 对中文的支持
@@ -134,7 +172,8 @@ int main()
 	std::cout << std::setw(2) << str << std::endl;
 
 
-	test2();
+	test_read();
+	//test_write();
 
 	system("pause");
 	std::cout << "Hello World!\n";

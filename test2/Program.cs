@@ -45,12 +45,50 @@ namespace test2
     {
         static void Main(string[] args)
         {
-            test2();
+            test_write();
+            //test_read();
 
             Console.ReadKey();
         }
 
-        static void test2()
+        static void test_write()
+        {
+            //write
+            Console.WriteLine("begin to write...");
+
+            var points = new mypoint[]
+            {
+                new mypoint(){ x=1, y=1 },
+                new mypoint(){ x=2, y=2 },
+                new mypoint(){ x=3, y=3 },
+            };
+            List<mypoint> Tmplist2 = new List<mypoint>();
+            Tmplist2.AddRange(points);
+            Person2 pp2 = new Person2() { name = "李四 abc1", address = "add2", age = 10, Tmplist1 = { 11, 20, 35 }, Tmplist2 = Tmplist2 };
+
+            // json序列化
+            string jsonStr = JsonConvert.SerializeObject(pp2);
+            var StrBuffer = System.Text.Encoding.UTF8.GetBytes(jsonStr);
+
+            smm_header head = new smm_header();
+            head.command = 1;
+            head.length = StrBuffer.Length;
+
+            // write head
+            ShareMemory sm = new ShareMemory();
+
+            var bytesBuffer = Struct_Transform.StructToBytes(head);
+            Console.WriteLine("waitting for write smm_header...");
+            sm.Write(bytesBuffer, 0, bytesBuffer.Length);
+
+            // write data
+            Console.WriteLine("waitting for write data...");
+            sm.Write(StrBuffer, Marshal.SizeOf(typeof(smm_header)), StrBuffer.Length);
+
+            Console.WriteLine("write data finish.");
+        }
+
+        static void test_read()
         {
             // read
             ShareMemory sm = new ShareMemory();
