@@ -3,7 +3,10 @@
 
 #include "pch.h"
 #include "IPC/ShareMemory.h"
+#include "help_str.h"
+
 #include <iostream>
+#include <iomanip>
 #include <nlohmann/json.hpp>
 
 using nlohmann::json;
@@ -26,19 +29,37 @@ struct Person_2
 
 namespace ns {
 	// a simple struct to model a person
+	struct mypoint {
+		int x;
+		int y;
+	};
+
 	struct person {
 		std::string name;
 		std::string address;
 		int age;
-		std::vector<int> tmp;
+		std::vector<int> Tmplist1;
+		std::vector<mypoint> Tmplist2;
 	};
+
+	void to_json(json& j, const mypoint& p) {
+		j = json{
+			{"x", p.x},
+			{"y", p.y},
+		};
+	}
+	void from_json(const json& j, mypoint& p) {
+		j.at("x").get_to(p.x);
+		j.at("y").get_to(p.y);
+	}
 
 	void to_json(json& j, const person& p) {
 		j = json{
 			{"name", p.name}, 
 			{"address", p.address}, 
 			{"age", p.age}, 
-			{"tmp", p.tmp} 
+			{"Tmplist1", p.Tmplist1},
+			{"Tmplist2", p.Tmplist2},
 		};
 	}
 
@@ -46,7 +67,8 @@ namespace ns {
 		j.at("name").get_to(p.name);
 		j.at("address").get_to(p.address);
 		j.at("age").get_to(p.age);
-		j.at("tmp").get_to(p.tmp);
+		j.at("Tmplist1").get_to(p.Tmplist1);
+		j.at("Tmplist2").get_to(p.Tmplist2);
 	}
 
 }
@@ -56,7 +78,10 @@ CShareMemory g_smm;//如果是局部变量，对象析构之后共享内存里�
 void test2()
 {
 	// create a person
-	ns::person p{ "Ned Flanders", "744 Evergreen Terrace", 60 , {1,2,3} };
+	// 对中文的支持
+	std::string name = "张三 abc 123";
+	std::string name_utf8 = string_To_UTF8(name);
+	ns::person p{ name_utf8, "address 1", 60 , {1,2,3}, { {1,1},{2,2},{3,3}} };
 
 	// conversion: person -> json
 	json j = p;
@@ -94,6 +119,21 @@ void test1()
 
 int main()
 {
+	//std::wstring w = L"{ \"happy\": \"大家好\", \"pi\": 3.141 }";
+	std::u32string w = U"[12.2,\"大家好\"]";
+	json j2 = json::parse(w);
+	auto tmp = j2.dump();
+	std::string str111 = UTF8_To_string(tmp);
+	std::cout << str111 << std::endl;
+
+	std::string s = R"({"is_delete":0,"is_file":0,"is_share":0,"lv_creator":"","lv_id":1,"lv_size":0,"lv_time":"","name":"回收站","x_id":6,"x_pid":1})";
+	std::string utf8str = string_To_UTF8(s);
+	json j = json::parse(utf8str);
+	utf8str = j.dump();
+	std::string str = UTF8_To_string(utf8str);
+	std::cout << std::setw(2) << str << std::endl;
+
+
 	test2();
 
 	system("pause");

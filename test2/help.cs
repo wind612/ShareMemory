@@ -51,5 +51,22 @@ namespace test2
             }
             return dst;
         }
+
+        public static string UTF8ToGb2312(string str)
+        {
+            string gb2312info = string.Empty;
+
+            Encoding utf8 = Encoding.UTF8;
+            Encoding gb2312 = Encoding.GetEncoding("gb2312");
+
+            byte[] unicodeBytes = utf8.GetBytes(str);
+
+            byte[] asciiBytes = Encoding.Convert(utf8, gb2312, unicodeBytes);
+
+            char[] asciiChars = new char[gb2312.GetCharCount(asciiBytes, 0, asciiBytes.Length)];
+            gb2312.GetChars(asciiBytes, 0, asciiBytes.Length, asciiChars, 0);
+            gb2312info = new string(asciiChars);
+            return gb2312info;
+        }
     }
 }
