@@ -92,6 +92,8 @@ std::u16string utf8_to_utf16_std(std::string utf8_string) // OK
 
 //////////////////////////////////////////////
 // 未验证
+#pragma region 未验证
+
 typedef std::string u8string;
 
 u8string utf16_to_utf8(const std::u16string &s)
@@ -148,3 +150,6 @@ std::u32string To_UTF32(const std::u16string &s)
 	return conv.from_bytes(reinterpret_cast<const char*>(pData), reinterpret_cast<const char*>(pData + s.length()));
 }
 */
+
+#pragma endregion
+
