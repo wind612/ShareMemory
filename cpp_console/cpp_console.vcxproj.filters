@@ -24,6 +24,12 @@
     <ClInclude Include="help_str.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="NamePipeTest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadTest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -36,6 +42,12 @@
       <Filter>IPC</Filter>
     </ClCompile>
     <ClCompile Include="help_str.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NamePipeTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

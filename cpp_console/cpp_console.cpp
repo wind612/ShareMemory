@@ -4,6 +4,8 @@
 #include "pch.h"
 #include "IPC/ShareMemory.h"
 #include "help_str.h"
+#include "NamePipeTest.h"
+#include "ThreadTest.h"
 
 #include <iostream>
 #include <iomanip>
@@ -157,6 +159,10 @@ void test1()
 
 int main()
 {
+	// Name pipe test.
+	NamePipeTest();
+	return 0;
+
 	//std::wstring w = L"{ \"happy\": \"大家好\", \"pi\": 3.141 }";
 	std::u32string w = U"[12.2,\"大家好\"]";
 	json j2 = json::parse(w);
