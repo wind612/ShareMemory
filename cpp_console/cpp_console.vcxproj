@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="help_str.h" />
+    <ClInclude Include="IPC\NamePipe.h" />
     <ClInclude Include="NamePipeTest.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ThreadTest.h" />

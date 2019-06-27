@@ -6,12 +6,12 @@
 
 using namespace std;
 
-NamePipe::NamePipe()
+CNamePipe::CNamePipe()
 {
 	// Create a pipe to send data
 	m_pipe = CreateNamedPipe(
 		L"\\\\.\\pipe\\PipeCppCshap", // name of the pipe
-		PIPE_ACCESS_DUPLEX, // 1-way pipe -- send only
+		PIPE_ACCESS_DUPLEX, // 1-way pipe -- send and receive
 		PIPE_TYPE_BYTE, // send data as a byte stream
 		1, // only allow 1 instance of this pipe
 		0, // no outbound buffer
@@ -38,14 +38,14 @@ NamePipe::NamePipe()
 	}
 }
 
-NamePipe::~NamePipe()
+CNamePipe::~CNamePipe()
 {
 	DisconnectNamedPipe(m_pipe);
 	// Close the pipe (automatically disconnects client too)
 	CloseHandle(m_pipe);
 }
 
-void NamePipe::write(BYTE* data,  UINT32 data_len)
+void CNamePipe::write(BYTE* data,  UINT32 data_len)
 {
 	DWORD numBytesWritten = 0;
 	BOOL result = WriteFile(
@@ -57,7 +57,7 @@ void NamePipe::write(BYTE* data,  UINT32 data_len)
 	);
 }
 
-void NamePipe::read(BYTE* data,  UINT32 data_len)
+void CNamePipe::read(BYTE* data,  UINT32 data_len)
 {
 	DWORD numBytesRead = 0;
 	BOOL result = ReadFile(

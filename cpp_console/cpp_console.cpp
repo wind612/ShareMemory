@@ -6,6 +6,7 @@
 #include "help_str.h"
 #include "NamePipeTest.h"
 #include "ThreadTest.h"
+#include "IPC/NamePipe.h"
 
 #include <iostream>
 #include <iomanip>
@@ -76,6 +77,7 @@ namespace ns {
 }
 
 CShareMemory g_smm;//如果是局部变量，对象析构之后共享内存里面的东西也会清空。
+CNamePipe g_pipe;
 
 void test_read()
 {
@@ -157,10 +159,26 @@ void test1()
 	g_smm.write((BYTE*)&head, 0, sizeof(head));
 }
 
+void test2()
+{
+	// test write
+	g_pipe;
+	smm_header head;
+	head.command = 3;
+	head.length = 30;
+	g_pipe.write((BYTE*)&head, sizeof(head));
+
+	// test read	
+	g_pipe.read((BYTE*)& head, sizeof(head));
+	printf("head.length=%d, head.command=%d\r\n", head.length, head.command);
+}
+
 int main()
 {
 	// Name pipe test.
-	NamePipeTest();
+	//NamePipeTest();
+	test2();
+	system("pause");
 	return 0;
 
 	//std::wstring w = L"{ \"happy\": \"大家好\", \"pi\": 3.141 }";

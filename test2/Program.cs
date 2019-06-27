@@ -45,7 +45,8 @@ namespace test2
     {
         static void Main(string[] args)
         {
-            test_write();
+            test2();
+            //test_write();
             //test_read();
 
             Console.ReadKey();
@@ -145,6 +146,31 @@ namespace test2
             sm.Read(out bytes, 0, Marshal.SizeOf(typeof(smm_header)));
             smm_header head2 = Struct_Transform.BytesToStruct<smm_header>(bytes);
             Console.WriteLine($"command = {head2.command}, length = {head2.length}");
+        }
+
+        static void test2()
+        {
+            // read
+            NamePipe pipe = new NamePipe();
+
+            Console.WriteLine("waitting for read...");
+            Thread.Sleep(3000);
+
+            // read head.
+            var bytes = new byte[Marshal.SizeOf(typeof(smm_header))];
+            pipe.Read(out bytes, Marshal.SizeOf(typeof(smm_header)));
+            smm_header head2 = Struct_Transform.BytesToStruct<smm_header>(bytes);
+            Console.WriteLine($"command = {head2.command}, length = {head2.length}");
+
+            //test write
+            smm_header head = new smm_header();
+            head.command = 1;
+            head.length = 10;
+
+            // write head
+            var bytesBuffer = Struct_Transform.StructToBytes(head);
+            Console.WriteLine("waitting for write smm_header...");
+            pipe.Write(bytesBuffer, bytesBuffer.Length);
         }
 
     }

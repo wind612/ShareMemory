@@ -30,6 +30,9 @@
     <ClInclude Include="ThreadTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IPC\NamePipe.h">
+      <Filter>IPC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
