@@ -10,12 +10,12 @@ using namespace std;
 void NamePipeWrite() 
 {
 	std::cout << "in NamePipeWrite.\n";
-	wcout << "Creating an instance of a named pipe..." << endl;
+	wcout << "Creating an instance of a named pipe..." << endl;	
 
 	// Create a pipe to send data
 	HANDLE pipe = CreateNamedPipe(
 		L"\\\\.\\pipe\\my_pipe", // name of the pipe
-		PIPE_ACCESS_OUTBOUND, // 1-way pipe -- send only
+		PIPE_ACCESS_DUPLEX, // 1-way pipe -- send only
 		PIPE_TYPE_BYTE, // send data as a byte stream
 		1, // only allow 1 instance of this pipe
 		0, // no outbound buffer
@@ -30,7 +30,7 @@ void NamePipeWrite()
 		system("pause");
 		return ;
 	}
-
+	
 	wcout << "Waiting for a client to connect to the pipe..." << endl << endl;
 
 	// This call blocks until a client process connects to the pipe
@@ -65,6 +65,7 @@ void NamePipeWrite()
 		// look up error code here using GetLastError()
 	}
 
+	DisconnectNamedPipe(pipe);
 	// Close the pipe (automatically disconnects client too)
 	CloseHandle(pipe);
 
@@ -75,9 +76,25 @@ void NamePipeWrite()
 void NamePipeRead()
 {
 	std::cout << "in NamePipeRead.\n";
+	wcout << "Connecting to pipe..." << endl;
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 
-	wcout << "Connecting to pipe..." << endl;
+#if 0
+	if (!WaitNamedPipe(L"\\\\127.0.0.1\\pipe\\my_pipe", NMPWAIT_WAIT_FOREVER))
+	{
+		/*
+		WaitNamedPipe, 只有管道存在并且不可连接的情况下才会等待，否则立刻返回。其实没啥用。
+		It does not wait for a pipe to come into existence, 
+		it waits for an existing pipe to become available (i.e. an outstanding ConnectNamedPipe):
+		超时时间设置：
+		nTimeOut 等待命名管道的一个实例有效的超时时间，单位毫秒，也可以使用下面两个值中的一个：
+			NMPWAIT_USE_DEFAULT_WAIT 0x00000000,使用服务端CreateNamedPipe 创建管道时设置的超时时间。
+			NMPWAIT_WAIT_FOREVER 0xffffffff，一直等到一个命名管道的实例有效才返回。
+		*/
+		std::cout << "当前没有可用的命名管道\n";
+		return;
+	}
+#endif
 
 	// Open the named pipe
 	// Most of these parameters aren't very relevant for pipes.
@@ -129,8 +146,8 @@ void NamePipeRead()
 
 void NamePipeTest()
 {
-	std::thread w(NamePipeWrite);
-	std::thread r(NamePipeRead);
+	std::thread w(NamePipeWrite); // server
+	std::thread r(NamePipeRead);  // client
 
 	w.join();
 	r.join();

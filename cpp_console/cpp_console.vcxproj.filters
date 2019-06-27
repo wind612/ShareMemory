@@ -50,5 +50,8 @@
     <ClCompile Include="ThreadTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IPC\NamePipe.cpp">
+      <Filter>IPC</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

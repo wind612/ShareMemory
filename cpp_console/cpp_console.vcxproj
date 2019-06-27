@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="cpp_console.cpp" />
     <ClCompile Include="help_str.cpp" />
+    <ClCompile Include="IPC\NamePipe.cpp" />
     <ClCompile Include="IPC\ShareMemory.cpp" />
     <ClCompile Include="NamePipeTest.cpp" />
     <ClCompile Include="pch.cpp">
