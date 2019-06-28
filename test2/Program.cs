@@ -171,6 +171,7 @@ namespace test2
             var bytesBuffer = Struct_Transform.StructToBytes(head);
             Console.WriteLine("waitting for write smm_header...");
             pipe.Write(bytesBuffer, bytesBuffer.Length);
+            Console.WriteLine("write finish.");
         }
 
     }
